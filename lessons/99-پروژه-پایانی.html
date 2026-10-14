@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بخش ۹۹ | پروژه‌ی پایانی: فروشگاه کوچک</title>
+    <meta name="description" content="پروژه‌ی پایانی دوره لاراول: ساختن فروشگاه کوچک قدم‌به‌قدم — Auth، CRUD محصول، دسته‌بندی، آپلود تصویر، سبد خرید و سفارش">
+
+    <link rel="stylesheet" href="../assets/css/style.css">
+
+    <style>
+        .tk99-term { background:#0f172a; color:#e2e8f0; direction:ltr; text-align:left; font-family:'JetBrains Mono','Fira Code',Consolas,monospace; font-size:12.5px; line-height:1.9; padding:14px 16px; border-radius:10px; overflow-x:auto; white-space:pre; }
+        .tk99-term .p { color:#38bdf8; }
+        .tk99-term .c { color:#94a3b8; }
+        .tk99-term .o { color:#4ade80; }
+        .tk99-term .x { color:#f87171; }
+        .tk99-more { margin-top:14px; font-size:12.5px; color:#64748b; background:#f8fafc; border:1px dashed #cbd5e1; border-radius:8px; padding:8px 12px; }
+        .tk99-more a { color:#4f46e5; text-decoration:none; font-weight:600; }
+        .tk99-more a:hover { text-decoration:underline; }
+        .tk99-file { display:inline-block; background:#eef2ff; color:#4338ca; font-family:'JetBrains Mono','Fira Code',Consolas,monospace; font-size:12.5px; direction:ltr; padding:2px 9px; border-radius:6px; border:1px solid #c7d2fe; }
+        .tk99-check { margin-top:14px; background:#f0fdf4; border:1px solid #bbf7d0; border-right:4px solid #10b981; border-radius:10px; padding:12px 16px; font-size:13.5px; }
+        .tk99-check .lbl { color:#15803d; font-weight:700; margin-bottom:4px; }
+        .tk99-check code { background:#ecfdf5; border-color:#bbf7d0; }
+        .tk99-map { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; }
+        .tk99-card { background:#fff; border:1px solid var(--border); border-radius:12px; padding:16px 18px; }
+        .tk99-card h4 { margin:0 0 8px; color:#4338ca; font-size:14px; }
+        .tk99-card p { margin:0; color:#475569; font-size:13px; line-height:1.9; }
+        .tk99-done { list-style:none; padding-right:0; }
+        .tk99-done li { position:relative; padding-right:26px; margin-bottom:8px; }
+        .tk99-done li::before { content:"✓"; position:absolute; right:0; top:0; color:#10b981; font-weight:800; }
+    </style>
+</head>
+<body>
+<div class="course-page">
+
+    <header class="course-header">
+        <span class="badge">بخش ۹۹</span>
+        <h1>پروژه‌ی پایانی: فروشگاه کوچک</h1>
+        <p>همه‌ی درس‌های دوره این‌جا به هم می‌رسند ✨. این صفحه نقشه‌ی راهِ گام‌به‌گامِ پروژه است، نه کدِ آماده. هر گام را خودت بساز، با «تستِ گام» چکش کن و بعد برو سراغ گامِ بعدی.</p>
+    </header>
+
+    <nav class="toc" aria-label="فهرست مطالب">
+        <h2>رویِ‌کرد پروژه: ۱۰ گام، از صفر تا خریدِ واقعی</h2>
+        <ol>
+            <li><a href="#blueprint">نقشه‌ی کلی پروژه (قبل از شروع)</a></li>
+            <li><a href="#step1">گام ۱: اسکلت و قالب x-layout</a></li>
+            <li><a href="#step2">گام ۲: Auth و نقش admin</a></li>
+            <li><a href="#step3">گام ۳: جداول و مدل‌ها</a></li>
+            <li><a href="#step4">گام ۴: Seed داده‌ی اولیه</a></li>
+            <li><a href="#step5">گام ۵: CRUD محصول در پنل</a></li>
+            <li><a href="#step6">گام ۶: آپلود تصویر</a></li>
+            <li><a href="#step7">گام ۷: فهرست عمومی + جستجو + صفحه‌بندی</a></li>
+            <li><a href="#step8">گام ۸: سبد خرید و سفارش</a></li>
+            <li><a href="#step9">گام ۹: Validation کامل</a></li>
+            <li><a href="#step10">گام ۱۰: تستِ نهایی و امنیت</a></li>
+            <li><a href="#summary">خلاصه‌ی پروژه</a></li>
+        </ol>
+    </nav>
+
+    <!-- ================= نقشه ================= -->
+    <section class="lesson" id="blueprint">
+        <div class="lesson-head">
+            <span class="lesson-num">۱</span>
+            <h2>نقشه‌ی کلی پروژه (قبل از شروع)</h2>
+        </div>
+
+        <p>قبل از اولین گام، کلِ محصولِ نهایی را ببین تا حینِ ساختن مسیرت را گم نکنی. فروشگاهِ ما از این‌جاها تشکیل شده است:</p>
+
+        <div class="demo demo-full">
+            <div class="demo-code">
+                <div class="demo-label"><span>کد</span><span class="demo-tag">نقشه‌ی روت‌ها</span></div>
+                <pre><code>روتِ عمومی (مهمان هم می‌بیند)          پنلِ مدیریت (فقط admin)
+------------------------------          ------------------------------
+GET  /                       → خانه    GET    /admin               → داشبورد
+GET  /products               → فهرست   GET    /admin/products       → فهرست
+GET  /products/{product}     → نمایش   GET    /admin/products/create → ساخت
+GET  /cart                   → سبد     POST   /admin/products        → ذخیره
+POST /cart/{product}         → افزودن  PUT    /admin/products/{product} → بروزرسانی
+POST /checkout               → سفارش   DELETE /admin/products/{product} → حذف
+POST /login, /register      → ورود
+POST /logout                → خروج
+        </code></pre>
+            </div>
+        </div>
+
+        <div class="tk99-map">
+            <div class="tk99-card">
+                <h4>جدول‌ها</h4>
+                <p><code>users</code> (با role) — <code>categories</code> — <code>products</code> (با image و category_id) — <code>orders</code> — <code>order_product</code> (pivot با quantity).</p>
+            </div>
+            <div class="tk99-card">
+                <h4>مدل‌ها و روابط</h4>
+                <p>Category ← hasMany → Product ← belongsTo به هم؛ Order belongsTo User و belongsToMany Product (pivot).</p>
+            </div>
+            <div class="tk99-card">
+                <h4>میان‌افزار و گیت</h4>
+                <p><code>auth</code> برای سبد/سفارش، <code>check-role:admin</code> برای پنل، و Gate برای مدیریتِ محصول.</p>
+            </div>
+        </div>
+
+        <div class="note tip">
+            <div class="note-title">💡 از کجا شروع کنم؟</div>
+            <p>اگر پروژه‌ای که از بخش ۲ تا ۱۵ ساختی سر جای‌اش است، همان را ادامه بده — این ۱۰ گام دقیقاً رویِ همان پیاده می‌شود. اگر پروژه‌ات را گم کرده‌ای، با <span class="tk99-file">composer create-project laravel/laravel shop</span> دوباره بساز و از گام ۱ شروع کن.</p>
+        </div>
+    </section>
+
+    <!-- ================= گام ۱ ================= -->
+    <section class="lesson" id="step1">
+        <div class="lesson-head">
+            <span class="lesson-num">۲</span>
+            <h2>گام ۱: اسکلت و قالب x-layout</h2>
+        </div>
+
+        <div class="proj-step">
+            <div class="proj-title">هدف: تمامِ صفحات یک قالبِ مشترک داشته باشند</div>
+            <p>در درسِ ۶ قالب را با <code>layouts/app.blade.php</code> و <code>@extends</code> ساختیم. اینجا همان قالب را به شکلِ
+                یک <strong>کامپوننتِ Blade</strong> می‌نویسیم تا همه‌ی صفحه‌ها کوتاه‌تر شوند:</p>
+        </div>
+
+        <ul class="tk99-done">
+            <li>کامپوننتِ <span class="tk99-file">resources/views/components/layout.blade.php</span> را بساز با <code>@props(['title' =&gt; ...])</code>.</li>
+            <li>داخلش: head با سبکِ سراسری، header با ناوبری، <code>{{ $slot }}</code>، footer.</li>
+            <li>فایلِ سبکِ <span class="tk99-file">assets/css/style.css</span> را (از دوره) درِ head متصل کن.</li>
+            <li>ناوبریِ header شامل: خانه، محصولات، سبد خرید و (ورود/ثبت‌نام یا نامِ کاربر + خروج).</li>
+        </ul>
+
+        <div class="demo demo-full">
+            <div class="demo-code">
+                <div class="demo-label"><span>کد</span><span class="demo-tag">استفاده درِ هر بلیدِ صفحات</span></div>
+                <pre><code>&lt;x-layout title="فروشگاه کوچک"&gt;
+    &lt;h1&gt;به فروشگاه خوش آمدی&lt;/h1&gt;
+    &lt;p&gt;... محتوای هر صفحه ...&lt;/p&gt;
+&lt;/x-layout&gt;</code></pre>
+            </div>
+        </div>
+
+        <div class="tk99-check">
+            <div class="lbl">تستِ گام</div>
+            صفحه‌ی <code>/</code> و <code>/products</code> را باز کن: هر دو با همین قالبِ یکسان لود شوند و ناوبریِ بالای صفحه درِ هر دو دیده شود.
+        </div>
+    </section>
+
+    <!-- ================= گام ۲ ================= -->
+    <section class="lesson" id="step2">
+        <div class="lesson-head">
+            <span class="lesson-num">۳</span>
+            <h2>گام ۲: Auth و نقش admin</h2>
+        </div>
+
+        <div class="proj-step">
+            <div class="proj-title">هدف: ثبت‌نام/ورود/خروج + یک کاربرِ مدیر</div>
+            <p>جمعِ درس‌های ۱۰ و ۱۲: فرمِ ثبت‌نام، ورود با <code>Auth::attempt</code> و خروجِ چندمرحله‌ای.</p>
+        </div>
+
+        <ul class="tk99-done">
+            <li>ستونِ <code>role</code> (پیش‌فرضِ <code>customer</code>) با migration به جدولِ users اضافه کن.</li>
+            <li>کنترلرها را بساز: <code>php artisan make:controller AuthController</code> و
+                <code>php artisan make:controller DashboardController</code>.</li>
+            <li>در <code>AuthController</code>: <code>createRegister()</code>/<code>store()</code> (با <code>Hash::make</code>)،
+                <code>createLogin()</code>/<code>store()</code> برای ورود، و <code>logout()</code>.
+                بعدِ ورود موفق: <code>session()-&gt;regenerate()</code> + <code>redirect()-&gt;intended()</code>.</li>
+            <li>خروج: <code>Auth::logout()</code> + <code>invalidate()</code> + <code>regenerateToken()</code>.</li>
+            <li>روت‌های پنل را از همین الان با <code>middleware(['auth','check-role:admin'])</code> بساز (میان‌افزارِ نقش از درسِ ۱۱).</li>
+            <li>یک کاربرِ admin بساز (از گام ۴ دائمی می‌شود).</li>
+        </ul>
+
+        <div class="demo demo-full">
+            <div class="demo-code">
+                <div class="demo-label"><span>کد</span><span class="demo-tag">routes/web.php</span></div>
+                <pre><code>Route::middleware(['auth', 'check-role:admin'])-&gt;prefix('admin')
+    -&gt;group(function () {
+        Route::get('/', [DashboardController::class, 'index'])-&gt;name('admin.dashboard');
+        // روت‌های مدیریتِ محصولات درِ گام ۵
+    });</code></pre>
+            </div>
+        </div>
+
+        <div class="tk99-check">
+            <div class="lbl">تستِ گام</div>
+            بدونِ ورود برو <code>/admin</code> → باید به صفحه‌ی ورود ریدایرکت شوی. با ادمین وارد شو → به داشبورد برسی. (ترتیبِ میان‌افزارها مهم است: اول <code>auth</code>، بعد <code>check-role</code>.)
+        </div>
+    </section>
+
+    <!-- ================= گام ۳ ================= -->
+    <section class="lesson" id="step3">
+        <div class="lesson-head">
+            <span class="lesson-num">۴</span>
+            <h2>گام ۳: جداول و مدل‌ها</h2>
+        </div>
+
+        <div class="proj-step">
+            <div class="proj-title">هدف: خوابِ دیتابیسیِ فروشگاه</div>
+            <p>جمعِ درس‌های ۷، ۸ و ۹: migration و مدل + روابط.</p>
+        </div>
+
+        <div class="demo demo-full">
+            <div class="demo-code">
+                <div class="demo-label"><span>کد</span><span class="demo-tag">خلاصه‌ی جداول</span></div>
+                <pre><code>categories: id | name | timestamps
+
+products:   id | category_id (FK) | name | description | price | image? | timestamps
+
+orders:     id | user_id (FK) | total | timestamps
+
+order_product: order_id | product_id | quantity        // pivot</code></pre>
+            </div>
+        </div>
+
+        <ul class="tk99-done">
+
+            <li>مدل‌ها: <code>Category</code> (hasMany products)، <code>Product</code> (belongsTo category، belongsToMany orders با <code>-&gt;withPivot('quantity')</code>)، <code>Order</code> (belongsTo user، belongsToMany products)، <code>User</code> (hasMany orders).</li>
+            <li>روی <code>Product</code> با <code>#[Fillable('name', 'description', 'price', 'category_id', 'image')]</code> فیلدهای مجاز را مشخص کن.</li>
+            <li><code>php artisan migrate</code> را اجرا کن.</li>
+        </ul>
+
+        <div class="tk99-check">
+            <div class="lbl">تستِ گام</div>
+            درِ Tinker: <code>$c = Category::create(['name' =&gt; 'کتاب']);</code> و <code>$c-&gt;products()-&gt;create([...])</code> — رابطه‌ی hasMany باید کار کند.
+        </div>
+    </section>
+
+    <!-- ================= گام ۴ ================= -->
+    <section class="lesson" id="step4">
+        <div class="lesson-head">
+            <span class="lesson-num">۵</span>
+            <h2>گام ۴: Seed داده‌ی اولیه</h2>
+        </div>
+
+        <div class="proj-step">
+            <div class="proj-title">هدف: یک فرمان = فروشگاهِ پر</div>
+            <p>جمعِ درسِ ۱۳: seeder برای دسته‌ها، factory برای محصولات، و ادمینِ همیشگی.</p>
+        </div>
+
+        <ul class="tk99-done">
+            <li><code>CategorySeeder</code>: کتاب، نوشت‌افزار، گجت (داده‌ی کنترل‌شده).</li>
+            <li><code>ProductFactory</code>: نام/توضیح/قیمت با <code>fake()</code> و <code>category_id =&gt; Category::factory()</code>.</li>
+            <li><code>DatabaseSeeder</code>: ترتیبِ <code>$this-&gt;call([CategorySeeder::class, ProductSeeder::class])</code> + کاربرِ <code>admin@shop.test</code> با role admin.</li>
+            <li>اجرا: <code>php artisan migrate:fresh --seed</code>.</li>
+        </ul>
+
+        <div class="tk99-check">
+            <div class="lbl">تستِ گام</div>
+            <code>php artisan tinker</code> → <code>Product::count()</code> باید ۴۰ و <code>User::where('role','admin')-&gt;count()</code> باید ۱ باشد.
+        </div>
+    </section>
+
+    <!-- ================= گام ۵ ================= -->
+    <section class="lesson" id="step5">
+        <div class="lesson-head">
+            <span class="lesson-num">۶</span>
+            <h2>گام ۵: CRUD محصول در پنل</h2>
+        </div>
+
+        <div class="proj-step">
+            <div class="proj-title">هدف: مدیر بتواند محصول بسازد، ویرایش کند و حذف کند</div>
+            <p>جمعِ درس‌های ۸ و ۱۲ با مسیرِ <code>/admin/products</code> و محافظتِ کامل.</p>
+        </div>
+
+        <div class="demo demo-full">
+            <div class="demo-code">
+                <div class="demo-label"><span>کد</span><span class="demo-tag">routes — داخلِ گروهِ admin</span></div>
+<pre><code>// بدونِ -&gt;names() این نام‌ها با روت‌هایِ عمومیِ مرحله‌ی ۷ قفل می‌شوند؛ پس حتماً بده:
+Route::resource('products', Admin\ProductController::class)
+    -&gt;except(['show'])     // نمایشِ عمومی جدا درِ سایت است
+    -&gt;names('admin.products');</code></pre>
+            </div>
+        </div>
+
+        <ul class="tk99-done">
+            <li><code>index</code>: جدولِ محصولات (تصویر، نام، دسته، قیمت) + دکمه‌ی ساخت/ویرایش/حذف.</li>
+            <li><code>create/store</code>: فرم با validation؛ فیلدِ category از dropdown دسته‌ها.</li>
+            <li><code>edit/update</code>: ویرایشِ همان فرم؛ عکسِ فعلی را نشان بده.</li>
+            <li><code>destroy</code>: حذفِ ردیف + حذفِ فایل (گامِ بعد).</li>
+            <li>پیام‌هایِ فلش موفقیت با <code>redirect()-&gt;with('success', ...)</code> و نمایش درِ بلید.</li>
+        </ul>
+
+        <div class="tk99-check">
+            <div class="lbl">تستِ گام</div>
+            از پنل یک محصول جدید بساز، ویرایش‌اش کن و بعد حذف‌اش کن — هر بار پیامِ فلشِ درست را درِ صفحه ببین.
+        </div>
+    </section>
+
+    <!-- ================= گام ۶ ================= -->
+    <section class="lesson" id="step6">
+        <div class="lesson-head">
+            <span class="lesson-num">۷</span>
+            <h2>گام ۶: آپلود تصویر</h2>
+        </div>
+
+        <div class="proj-step">
+            <div class="proj-title">هدف: هر محصول یک عکسِ واقعی داشته باشد</div>
+            <p>جمعِ درسِ ۱۴: دیسکِ public، <code>store()</code>، نمایش با <code>asset()</code> و حذف با <code>Storage::disk('public')-&gt;delete()</code>.</p>
+        </div>
+
+        <ul class="tk99-done">
+            <li><code>php artisan storage:link</code> را اجرا کن (بدونِ آن، عکس‌ها ۴۰۴ می‌خورند).</li>
+            <li>فرم‌های create/edit را با <code>&lt;input type="file" name="image"&gt;</code> و <code>enctype="multipart/form-data"</code> تکمیل کن.</li>
+            <li>درِ <code>store()</code>: <code>$path = $request-&gt;file('image')-&gt;store('images', 'public')</code> و همان <code>$path</code> را درِ دیتابیس ذخیره کن.</li>
+            <li>درِ <code>update</code>: اگر <code>hasFile('image')</code>، عکسِ قبلی را با <code>Storage::disk('public')-&gt;delete($product-&gt;image)</code> پاک کن و مسیرِ جدید را بنویس.</li>
+            <li>درِ <code>destroy</code>: قبل از حذفِ ردیف، فایل را هم پاک کن.</li>
+            <li>نمایش درِ صفحاتِ عمومی: <code>&lt;img src="{{ asset('storage/' . $product-&gt;image) }}"&gt;</code>، و اگر null بود، placeholder.</li>
+        </ul>
+
+        <div class="tk99-check">
+            <div class="lbl">تستِ گام</div>
+            یک فایلِ jpg آپلود کن → درِ صفحه‌ی عمومیِ محصول باید دیده شود. محصول را حذف کن → هم ردیفِ دیتابیس و هم فایلِ واقعی باید بروند.
+        </div>
+    </section>
+
+    <!-- ================= گام ۷ ================= -->
+    <section class="lesson" id="step7">
+        <div class="lesson-head">
+            <span class="lesson-num">۸</span>
+            <h2>گام ۷: فهرست عمومی + جستجو + صفحه‌بندی</h2>
+        </div>
+
+        <div class="proj-step">
+            <div class="proj-title">هدف: مشتری درِ فروشگاه بچرخد و پیداش کند</div>
+            <p>جمعِ درسِ ۱۳: <code>paginate()</code>، <code>links()</code> و جست‌وجوی ساده با متدِ <code>when()</code> روی کوئری.</p>
+        </div>
+
+        <div class="demo demo-full">
+            <div class="demo-code">
+                <div class="demo-label"><span>کد</span><span class="demo-tag">ProductController@index</span></div>
+                <pre><code>public function index(Request $request): View
+{
+    $products = Product::query()
+        -&gt;with('category')
+        -&gt;when($request-&gt;search, fn ($q, $s) =&gt;
+            $q-&gt;where('name', 'like', "%{$s}%"))
+        -&gt;paginate(12)
+        -&gt;withQueryString();
+
+    return view('products.index', compact('products'));
+}</code></pre>
+            </div>
+        </div>
+
+        <ul class="tk99-done">
+            <li>روتِ عمومیِ <code>/products</code> را با <code>only(['index','show'])</code> بساز (سطحِ حمله کوچک — درسِ ۱۵).</li>
+            <li>کارتِ محصول: تصویر، نام، دسته، قیمت با <code>number_format($product-&gt;price)</code>.</li>
+            <li>فرمِ جستجوی <code>GET /products?search=...</code> و حفظِ پارامتر درِ لینک‌هایِ صفحات.</li>
+            <li>زیرِ فهرست: <code>{{ $products-&gt;links() }}</code> + کادرِ «نمایش ۱ تا ۱۲ از ۴۰».</li>
+        </ul>
+
+        <div class="tk99-check">
+            <div class="lbl">تستِ گام</div>
+                داده‌ی اولیه با seed و factory ساخته شده، پس هر بار که پروژه را از نو می‌سازی، همان محصول‌ها با همان قیمت‌ها سرِ جایشان هستند. این تنها راهِ درستِ داشتنِ یک محیطِ قابلِ اعتماد است.
+        </div>
+    </section>
+
+    <!-- ================= گام ۸ ================= -->
+    <section class="lesson" id="step8">
+        <div class="lesson-head">
+            <span class="lesson-num">۹</span>
+            <h2>گام ۸: سبد خرید و سفارش</h2>
+        </div>
+
+        <div class="proj-step">
+            <div class="proj-title">هدف: مشتری چند محصول جمع کند و سفارش ثبت شود</div>
+            <p>جمعِ درسِ ۴: سبدِ ساده با Session و ثبتِ سفارشِ بدونِ پرداختِ واقعی. ساخت کنترلر: <code>php artisan make:controller CartController</code>.</p>
+        </div>
+
+        <div class="demo demo-full">
+            <div class="demo-code">
+                <div class="demo-label"><span>کد</span><span class="demo-tag">app/Http/Controllers/CartController.php</span></div>
+                <pre><code>// افزودن به سبد — ذخیره: product_id =&gt; quantity
+$cart = session()-&gt;get('cart', []);
+$cart[$product-&gt;id] = ($cart[$product-&gt;id] ?? 0) + 1;
+session()-&gt;put('cart', $cart);
+
+// ثبتِ سفارش (فقط لاگین‌کرده)
+$order = Order::create(['user_id' =&gt; auth()-&gt;id(), 'total' =&gt; $total]);
+foreach ($cart as $pid =&gt; $qty) {
+    $order-&gt;products()-&gt;attach($pid, ['quantity' =&gt; $qty]);
+}
+session()-&gt;forget('cart');</code></pre>
+            </div>
+        </div>
+
+        <ul class="tk99-done">
+            <li>روت‌هایِ سبد: <code>GET /cart</code>، <code>POST /cart/{product}</code>، <code>DELETE /cart/{product}</code>.</li>
+            <li>صفحه‌ی سبد: لیستِ اقلام با قیمتِ واحد، تعداد و جمعِ کل (از داده‌ی واقعیِ دیتابیس، نه کوکی).</li>
+            <li>روتِ <code>POST /checkout</code> با middlewareِ <code>auth</code>؛ اگر مهمان بود → login.</li>
+            <li>جمعِ کل را حساب کن، <code>Order</code> بساز و با pivot quantity به محصولات متصل کن.</li>
+            <li>بعدِ سفارش: سبدِ session خالی شود + پیامِ فلشِ موفقیت.</li>
+        </ul>
+
+        <div class="tk99-check">
+            <div class="lbl">تستِ گام</div>
+            به‌عنوانِ مشتری لاگین شو، ۳ محصول اضافه کن، سفارش بده → درِ جدولِ <code>orders</code> ردیف + درِ pivot سه ردیف با quantity درست ثبت شود و سبد خالی شود.
+        </div>
+    </section>
+
+    <!-- ================= گام ۹ ================= -->
+    <section class="lesson" id="step9">
+        <div class="lesson-head">
+            <span class="lesson-num">۱۰</span>
+            <h2>گام ۹: Validation کامل</h2>
+        </div>
+
+        <div class="proj-step">
+            <div class="proj-title">هدف: هیچ ورودیِ ناخوانده‌ای پذیرفته نشود</div>
+            <p>جمعِ درسِ ۱۰: همه‌ی فرم‌ها با validation، <code>validated()</code>، <code>@error</code> و <code>old()</code>.</p>
+        </div>
+
+        <div class="demo demo-full">
+            <div class="demo-code">
+                <div class="demo-label"><span>کد</span><span class="demo-tag">قواعدِ پیشنهادی</span></div>
+                <pre><code>$validated = $request-&gt;validate([
+    'name'        =&gt; ['required', 'string', 'max:255'],
+    'description' =&gt; ['nullable', 'string'],
+    'price'       =&gt; ['required', 'integer', 'min:0', 'max:999999999'],
+    'category_id' =&gt; ['required', 'exists:categories,id'],
+    'image'       =&gt; ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
+]);
+
+// ثبت‌نام:
+'email'    =&gt; ['required', 'email', 'unique:users,email'],
+'password' =&gt; ['required', 'string', 'min:8', 'confirmed'],</code></pre>
+            </div>
+        </div>
+
+        <ul class="tk99-done">
+            <li>هر فرم = validation + <code>$request-&gt;validated()</code> (هرگز <code>$request-&gt;all()</code> مستقیم به <code>create</code>).</li>
+            <li>برایِ هر فیلد، <code>@error('name')</code> + <code>old('name')</code> درِ فرم‌هایِ POST.</li>
+            <li>درِ فرمِ ویرایش، <code>unique</code> را با <code>ignore($product-&gt;id)</code> تنظیم کن.</li>
+            <li>Mass assignment را با <code>$fillable</code> بسته نگه دار (درسِ ۱۵).</li>
+        </ul>
+
+        <div class="tk99-check">
+            <div class="lbl">تستِ گام</div>
+            با پسوردِ ۴ حرفی ثبت‌نام کن → خطا با پیامِ فارسیِ خوش‌خوان نشان داده شود و مقدارِ قبلیِ فیلدها با <code>old()</code> حفظ شود. با یک فایلِ exe فرمِ محصول → خطایِ mimes بگیری.
+        </div>
+    </section>
+
+    <!-- ================= گام ۱۰ ================= -->
+    <section class="lesson" id="step10">
+        <div class="lesson-head">
+            <span class="lesson-num">۱۱</span>
+            <h2>گام ۱۰: تستِ نهایی و امنیت</h2>
+        </div>
+
+        <div class="proj-step">
+            <div class="proj-title">هدف: کلِ جریانِ یک خریدِ واقعی بدونِ خلل</div>
+            <p>جمعِ درسِ ۱۵ + دو سناریویِ کامل از اول تا آخر.</p>
+        </div>
+
+        <div class="tk99-map">
+            <div class="tk99-card">
+                <h4>سناریوی مشتری</h4>
+                <p>ثبت‌نام → جستجو → افزودن به سبد → سفارش → دیدنِ پیامِ موفقیت.</p>
+            </div>
+            <div class="tk99-card">
+                <h4>سناریوی مدیر</h4>
+                <p>لاگین → ساختِ محصول با عکس → ویرایش → نمایشِ عکس درِ صفحه‌ی عمومیِ سایت.</p>
+            </div>
+        </div>
+
+        <ul class="tk99-done">
+            <li><code>@csrf</code> درِ همه‌ی فرم‌هایِ POST/PUT/DELETE؛ <code>@method('DELETE')</code> درِ فرمِ حذف.</li>
+            <li>اکسکیپ: درِ همه‌ی بلیدها <code>{{ }}</code>؛ هیچ <code>{!! !!}</code>ای رویِ داده‌ی کاربر نباشد.</li>
+            <li>rate limit: <code>throttle:login</code> رویِ <code>POST /login</code> (۵ درِ دقیقه).</li>
+            <li>محیطِ تولید: <code>APP_ENV=production</code> + <code>APP_DEBUG=false</code> درِ .envِ سرور.</li>
+            <li>public فقط <code>only(['index','show'])</code>؛ پنل با <code>auth</code> + <code>check-role:admin</code>.</li>
+        </ul>
+
+        <div class="tk99-check">
+            <div class="lbl">تستِ نهایی</div>
+            هر دو سناریو را از اول تا آخر (بدونِ استفاده از Tinker و بدونِ دست‌کاریِ مستقیمِ دیتابیس) اجرا کن — همه‌چیز باید واقعیِ واقعی کار کند. 🎉
+        </div>
+    </section>
+
+    <!-- ================= خلاصه ================= -->
+    <section class="lesson" id="summary">
+        <div class="lesson-head">
+            <span class="lesson-num">۱۲</span>
+            <h2>خلاصه‌ی پروژه</h2>
+        </div>
+
+        <table>
+            <caption>آنچه با این فروشگاه ساخته‌ای</caption>
+            <thead>
+                <tr><th>قابلیت</th><th>از کدام درس‌ها</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>قالبِ مشترک با x-layout و slot</td><td>۶</td></tr>
+                <tr><td>ثبت‌نام، ورود، خروج و نقش admin</td><td>۱۰، ۱۱، ۱۲</td></tr>
+                <tr><td>جداول، مدل‌ها و روابط</td><td>۷، ۸، ۹</td></tr>
+                <tr><td>داده‌ی آزمایشی با Seeder و Factory</td><td>۱۳</td></tr>
+                <tr><td>CRUD محصول با مسیرِ resource و Gate</td><td>۸، ۱۲</td></tr>
+                <tr><td>آپلود و حذفِ تصویر درِ storage</td><td>۱۴</td></tr>
+                <tr><td>فهرست با جستجو و صفحه‌بندی</td><td>۱۳</td></tr>
+                <tr><td>سبد خرید با Session و سفارش</td><td>۴، ۹</td></tr>
+                <tr><td>Validation و امنیتِ پایه</td><td>۱۰، ۱۵</td></tr>
+            </tbody>
+        </table>
+
+        <div class="exercise">
+            <div class="ex-title">🏆 چالش‌هایِ پس از پروژه</div>
+            <ol>
+                <li>یک فیلدِ «تخفیف» به محصول اضافه کن و قیمتِ نهایی را حساب کن.</li>
+                <li>فیلترِ قیمت درِ فهرست (بالای X تومان / زیر Y تومان) اضافه کن.</li>
+                <li>صفحه‌ی «سفارش‌هایِ من» برایِ هر مشتری (hasMany orders).</li>
+            </ol>
+        </div>
+
+        <div class="note tip">
+            <div class="note-title">💡 و حالا؟</div>
+            <p>مباحثِ پیشرفته‌تر (API و Sanctum، صف‌ها، events و notifications، تست‌نویسی) عمداً تویِ این دوره نیامدند — برایِ «مرحله‌ی بعدی» است. با همین فروشگاه، حالا پایه‌ی رفتن به آن‌ها را داری.</p>
+        </div>
+    </section>
+
+    <!-- ================= نکات طلایی ================= -->
+    <div class="golden">
+        <h3>🏆 چیزی که از این دوره تویِ ذهنت بماند</h3>
+        <ol>
+            <li>یک سایتِ واقعی ترکیبی است از: روت + کنترلر + مدل + بلید — و «ترتیبِ میان‌افزارها» حرفِ آخر را می‌زند.</li>
+            <li>«داده در دیتابیس، فایل در storage» — فقط مسیرِ فایل را ذخیره کن.</li>
+            <li>همیشه به ورودیِ کاربر بدباش: <code>validated()</code>، <code>{{ }}</code> و <code>@csrf</code>.</li>
+            <li>هر صفحه‌ای که middleware نداشته باشد «درِ بدونِ قفل» است؛ از <code>resource</code> فقط همان متدهایی را بساز که لازم داری.</li>
+            <li>برایِ توسعه، وضعیتِ قابلِ بازتولید (migrate:fresh --seed) مهم‌تر از داده‌ای است که دستی ست کرده‌ای.</li>
+            <li>پروژه‌ی بعدی‌ات را با همین ساختارِ ساده شروع کن؛ بعد پیچیدگی اضافه کن، نه قبلش.</li>
+        </ol>
+    </div>
+
+    <!-- ================= مطالعه‌ی بیشتر ================= -->
+    <div class="tk99-more">📚 مطالعه‌ی بیشتر (انگلیسی) برایِ ادامه‌ی راه:
+        <a href="https://laravel.com/docs/13.x/starter-kits" target="_blank" rel="noopener">Starter Kits</a> —
+        <a href="https://laravel.com/docs/13.x/session" target="_blank" rel="noopener">Session</a> —
+        <a href="https://laravel.com/docs/13.x/sanctum" target="_blank" rel="noopener">Sanctum (API)</a> —
+        <a href="https://laravel.com/docs/13.x/queues" target="_blank" rel="noopener">Queues</a> —
+        <a href="https://laravel.com/docs/13.x/testing" target="_blank" rel="noopener">Testing</a>.
+    </div>
+
+    <!-- ================= ناوبری ================= -->
+    <nav class="lesson-nav" aria-label="ناوبری بین بخش‌ها">
+        <a href="00-فهرست.html">فهرست درس‌ها</a>
+        <a href="15-امنیت.html">→ بخش قبل: امنیت پایه‌ی وب</a>
+        <a href="100-سورس-فروشگاه-لاراول.html">بخش بعد: دانلود سورس فروشگاه ←</a>
+    </nav>
+
+</div>
+</body>
+</html>
